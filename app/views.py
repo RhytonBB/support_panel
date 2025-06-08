@@ -194,7 +194,8 @@ def user_chat(token, telegram_id):
                            status=req.status,
                            full_name=worker.full_name,
                            token=token,
-                           telegram_id=telegram_id)
+                           telegram_id=telegram_id,
+                           request_id=req.id)
 
 @views_bp.route("/api/messages/<int:request_id>")
 def api_get_messages(request_id):
