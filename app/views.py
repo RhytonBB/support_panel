@@ -135,7 +135,7 @@ def close_request(request_id):
 def exit_chat():
     return redirect(url_for("views.index"))
 
-@views_bp.route("/chat/user/<token>/<int:telegram_id>", methods=["GET", "POST"])
+@views_bp.route("/chat/<token>/<int:telegram_id>", methods=["GET", "POST"])
 def user_chat(token, telegram_id):
     req = SupportRequest.query.filter_by(session_token=token).first()
     if not req or req.worker.telegram_id != telegram_id:
