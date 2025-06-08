@@ -3,9 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ status|capitalize }} обращения</title>
+    <style>
+        .flash {
+            background-color: #ffe0e0;
+            border: 1px solid red;
+            padding: 10px;
+            margin-bottom: 15px;
+            color: darkred;
+        }
+    </style>
 </head>
 <body>
     <h2>{{ status|capitalize }} обращения</h2>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash">
+          {% for message in messages %}
+            <p>{{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
 
     {% if status == 'new' %}
         <div id="new-requests-list"></div>
@@ -16,6 +35,11 @@
 
                 const list = document.getElementById("new-requests-list");
                 list.innerHTML = "";
+
+                if (requests.length === 0) {
+                    list.innerHTML = "<p>Нет новых обращений.</p>";
+                    return;
+                }
 
                 requests.forEach(r => {
                     const div = document.createElement("div");
@@ -43,6 +67,7 @@
             setInterval(fetchNewRequests, 3000);
         </script>
     {% else %}
+    <a href="/">Назад</a>
         {% for item in requests %}
             <div style="border: 1px solid gray; padding: 10px; margin-bottom: 10px;">
                 <p><strong>ФИО:</strong> {{ item.full_name }}</p>
