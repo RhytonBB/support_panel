@@ -1,0 +1,27 @@
+<!-- list_requests.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ status|capitalize }} обращения</title>
+</head>
+<body>
+    <h2>{{ status|capitalize }} обращения</h2>
+    {% for item in requests %}
+        <div style="border: 1px solid gray; padding: 10px; margin-bottom: 10px;">
+            <p><strong>ФИО:</strong> {{ item.full_name }}</p>
+            <p><strong>Ник:</strong> @{{ item.telegram_nick }}</p>
+            <p><strong>Telegram ID:</strong> {{ item.telegram_id }}</p>
+
+            {% if status == 'new' %}
+                <form method="POST" action="/requests/respond/{{ item.request.id }}">
+                    <button type="submit">Откликнуться</button>
+                </form>
+            {% else %}
+                <a href="/chat/operator/{{ item.request.id }}">Открыть чат</a>
+            {% endif %}
+        </div>
+    {% endfor %}
+    <a href="/">Назад</a>
+</body>
+</html>

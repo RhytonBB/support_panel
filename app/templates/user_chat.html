@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>Чат поддержки</title>
+    <style>
+        .message { padding: 10px; margin: 10px 0; border-radius: 5px; max-width: 70%; }
+        .user { background-color: #e0f7fa; margin-left: auto; }
+        .admin { background-color: #ffe0b2; margin-right: auto; }
+        .meta { font-size: 0.8em; color: gray; }
+        .media img, .media video {
+            max-width: 200px;
+            max-height: 150px;
+            margin-top: 5px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h2>Обращение в поддержку</h2>
+    <p><strong>Пользователь:</strong> {{ full_name }}</p>
+
+    <div class="chat">
+        {% for msg in messages %}
+            <div class="message {{ 'user' if msg.sender == 'user' else 'admin' }}">
+                {% if msg.text %}
+                    <div>{{ msg.text }}</div>
+                {% endif %}
+                {% if msg.media %}
+                    <div class="media">
+                    {% for m in msg.media %}
+                        {% if m.endswith('.mp4') or m.endswith('.webm') %}
+                            <video controls src="{{ m }}"></video>
+                        {% else %}
+                            <img src="{{ m }}" alt="media" />
+                        {% endif %}
+                    {% endfor %}
+                    </div>
+                {% endif %}
+                <div class="meta">{{ msg.created_at.strftime("%d.%m.%Y %H:%M") }}</div>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% if status == 'closed' %}
+        <p><em>Обращение закрыто. Вы не можете отправлять сообщения.</em></p>
+    {% else %}
+        <form method="POST" enctype="multipart/form-data"
+              action="{{ url_for('views.user_chat', token=token, telegram_id=telegram_id) }}">
+            <textarea name="text" rows="3" placeholder="Введите сообщение..." style="width:100%"></textarea><br />
+            <input type="file" name="media" multiple accept="image/*,video/*" /><br />
+            <button type="submit">Отправить</button>
+        </form>
+    {% endif %}
+</body>
+</html>

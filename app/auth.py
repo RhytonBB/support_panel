@@ -18,7 +18,7 @@ def login():
         user = SupportOperator.query.filter_by(username=username).first()
         if user and check_password_hash(user.password_hash, password):
             login_user(user)
-            return redirect(url_for('views.dashboard'))
+            return redirect(url_for('views.index'))
         return render_template('login.html', error="Неверные данные")
     return render_template('login.html')
 

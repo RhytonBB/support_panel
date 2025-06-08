@@ -3,6 +3,34 @@ from flask_login import UserMixin
 from datetime import datetime
 import uuid
 
+class Executor(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(64))
+    last_name = db.Column(db.String(64))
+    middle_name = db.Column(db.String(64), nullable=True)
+    passport = db.Column(db.String(64))
+    inn = db.Column(db.String(64))
+    company = db.Column(db.String(128))
+    phone = db.Column(db.String(32))
+    telegram_nick = db.Column(db.String(64), unique=True, nullable=False)  # Ключ связи
+    access_key = db.Column(db.String(64), unique=True)
+    is_verified = db.Column(db.Boolean, default=False)
+    fail_attempts = db.Column(db.Integer, default=0)
+    is_blocked = db.Column(db.Boolean, default=False)
+
+class Worker(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    telegram_nick = db.Column(db.String(64), db.ForeignKey('executor.telegram_nick'), nullable=False)
+    executor = db.relationship('Executor', backref=db.backref('workers', lazy=True),
+                               primaryjoin="Worker.telegram_nick == Executor.telegram_nick")
+
+    telegram_id = db.Column(db.BigInteger, unique=True, nullable=False)
+    full_name = db.Column(db.String(128))
+    phone = db.Column(db.String(32))
+    is_blocked = db.Column(db.Boolean, default=False)
+    fail_attempts = db.Column(db.Integer, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
 class SupportOperator(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)
@@ -27,3 +55,5 @@ class SupportMessage(db.Model):
     text = db.Column(db.Text, nullable=True)
     media = db.Column(db.JSON, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
