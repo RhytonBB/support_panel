@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from datetime import datetime
 from .models import db, SupportRequest, SupportMessage, Worker
 import os, uuid
+from flask import jsonify
 
 views_bp = Blueprint("views", __name__)
 
@@ -195,3 +196,18 @@ def user_chat(token, telegram_id):
                            token=token,
                            telegram_id=telegram_id)
 
+@views_bp.route("/api/messages/<int:request_id>")
+def api_get_messages(request_id):
+    req = SupportRequest.query.get_or_404(request_id)
+    messages = SupportMessage.query.filter_by(request_id=request_id).order_by(SupportMessage.created_at).all()
+
+    result = []
+    for msg in messages:
+        result.append({
+            "sender": msg.sender_role,
+            "text": msg.text,
+            "created_at": msg.created_at.strftime("%d.%m.%Y %H:%M"),
+            "media": msg.media or []
+        })
+
+    return jsonify(result)

@@ -20,27 +20,7 @@
     <h2>Обращение в поддержку</h2>
     <p><strong>Пользователь:</strong> {{ full_name }}</p>
 
-    <div class="chat">
-        {% for msg in messages %}
-            <div class="message {{ 'user' if msg.sender == 'user' else 'admin' }}">
-                {% if msg.text %}
-                    <div>{{ msg.text }}</div>
-                {% endif %}
-                {% if msg.media %}
-                    <div class="media">
-                    {% for m in msg.media %}
-                        {% if m.endswith('.mp4') or m.endswith('.webm') %}
-                            <video controls src="{{ m }}"></video>
-                        {% else %}
-                            <img src="{{ m }}" alt="media" />
-                        {% endif %}
-                    {% endfor %}
-                    </div>
-                {% endif %}
-                <div class="meta">{{ msg.created_at.strftime("%d.%m.%Y %H:%M") }}</div>
-            </div>
-        {% endfor %}
-    </div>
+    <div class="chat" id="chat"></div>
 
     {% if status == 'closed' %}
         <p><em>Обращение закрыто. Вы не можете отправлять сообщения.</em></p>
@@ -52,5 +32,58 @@
             <button type="submit">Отправить</button>
         </form>
     {% endif %}
+
+<script>
+    const requestId = parseInt("{{ request_id }}");
+    const chatEl = document.getElementById("chat");
+
+    function renderMessages(messages) {
+        chatEl.innerHTML = "";
+        messages.forEach(msg => {
+            const div = document.createElement("div");
+            div.className = "message " + (msg.sender === 'user' ? 'user' : 'admin');
+
+            if (msg.text) {
+                const text = document.createElement("div");
+                text.innerText = msg.text;
+                div.appendChild(text);
+            }
+
+            if (msg.media && msg.media.length > 0) {
+                const mediaContainer = document.createElement("div");
+                mediaContainer.className = "media";
+                msg.media.forEach(m => {
+                    if (m.endsWith('.mp4') || m.endsWith('.webm')) {
+                        const video = document.createElement("video");
+                        video.src = m;
+                        video.controls = true;
+                        mediaContainer.appendChild(video);
+                    } else {
+                        const img = document.createElement("img");
+                        img.src = m;
+                        mediaContainer.appendChild(img);
+                    }
+                });
+                div.appendChild(mediaContainer);
+            }
+
+            const meta = document.createElement("div");
+            meta.className = "meta";
+            meta.innerText = msg.created_at;
+            div.appendChild(meta);
+
+            chatEl.appendChild(div);
+        });
+    }
+
+    async function fetchMessages() {
+        const res = await fetch(`/api/messages/${requestId}`);
+        const messages = await res.json();
+        renderMessages(messages);
+    }
+
+    fetchMessages();
+    setInterval(fetchMessages, 5000);
+</script>
 </body>
 </html>
