@@ -138,7 +138,11 @@ def exit_chat():
 @views_bp.route("/chat/<token>/<int:telegram_id>", methods=["GET", "POST"])
 def user_chat(token, telegram_id):
     req = SupportRequest.query.filter_by(session_token=token).first()
-    if not req or req.worker.telegram_id != telegram_id:
+    if not req:
+        abort(404)
+
+    worker = Worker.query.get(req.worker_id)
+    if not worker or worker.telegram_id != telegram_id:
         abort(404)
 
     messages_db = SupportMessage.query.filter_by(request_id=req.id).order_by(SupportMessage.created_at).all()
@@ -184,10 +188,10 @@ def user_chat(token, telegram_id):
 
         return redirect(url_for("views.user_chat", token=token, telegram_id=telegram_id))
 
-    worker = Worker.query.get(req.worker_id)
     return render_template("user_chat.html",
                            messages=messages,
                            status=req.status,
                            full_name=worker.full_name,
                            token=token,
                            telegram_id=telegram_id)
+
