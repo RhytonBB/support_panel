@@ -1,4 +1,3 @@
-<!-- list_requests.html -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -7,21 +6,53 @@
 </head>
 <body>
     <h2>{{ status|capitalize }} обращения</h2>
-    {% for item in requests %}
-        <div style="border: 1px solid gray; padding: 10px; margin-bottom: 10px;">
-            <p><strong>ФИО:</strong> {{ item.full_name }}</p>
-            <p><strong>Ник:</strong> @{{ item.telegram_nick }}</p>
-            <p><strong>Telegram ID:</strong> {{ item.telegram_id }}</p>
 
-            {% if status == 'new' %}
-                <form method="POST" action="/requests/respond/{{ item.request.id }}">
-                    <button type="submit">Откликнуться</button>
-                </form>
-            {% else %}
+    {% if status == 'new' %}
+        <div id="new-requests-list"></div>
+        <script>
+            async function fetchNewRequests() {
+                const res = await fetch("/api/requests/new");
+                const requests = await res.json();
+
+                const list = document.getElementById("new-requests-list");
+                list.innerHTML = "";
+
+                requests.forEach(r => {
+                    const div = document.createElement("div");
+                    div.style = "border: 1px solid gray; padding: 10px; margin-bottom: 10px;";
+                    div.innerHTML = `
+                        <p><strong>ФИО:</strong> ${r.full_name}</p>
+                        <p><strong>Создано:</strong> ${new Date(r.created_at).toLocaleString()}</p>
+                        <form method="POST" action="/requests/respond/${r.id}" onsubmit="disableButton(this)">
+                            <button type="submit">Откликнуться</button>
+                        </form>
+                    `;
+                    list.appendChild(div);
+                });
+            }
+
+            function disableButton(form) {
+                const btn = form.querySelector("button");
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerText = "Ожидайте...";
+                }
+            }
+
+            fetchNewRequests();
+            setInterval(fetchNewRequests, 3000);
+        </script>
+    {% else %}
+        {% for item in requests %}
+            <div style="border: 1px solid gray; padding: 10px; margin-bottom: 10px;">
+                <p><strong>ФИО:</strong> {{ item.full_name }}</p>
+                <p><strong>Ник:</strong> @{{ item.telegram_nick }}</p>
+                <p><strong>Telegram ID:</strong> {{ item.telegram_id }}</p>
                 <a href="/chat/operator/{{ item.request.id }}">Открыть чат</a>
-            {% endif %}
-        </div>
-    {% endfor %}
+            </div>
+        {% endfor %}
+    {% endif %}
+
     <a href="/">Назад</a>
 </body>
 </html>

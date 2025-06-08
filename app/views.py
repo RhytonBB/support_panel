@@ -212,3 +212,16 @@ def api_get_messages(request_id):
         })
 
     return jsonify(result)
+
+@views_bp.route("/api/requests/new")
+def api_new_requests():
+    requests = SupportRequest.query.filter_by(status="new").order_by(SupportRequest.created_at).all()
+    data = []
+    for r in requests:
+        worker = Worker.query.get(r.worker_id)
+        data.append({
+            "id": r.id,
+            "full_name": worker.full_name if worker else "Неизвестно",
+            "created_at": r.created_at.isoformat()
+        })
+    return jsonify(data)
