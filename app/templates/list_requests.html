@@ -47,6 +47,11 @@
                                 <p><span class="info-label">ФИО:</span> {{ item.full_name }}</p>
                                 <p><span class="info-label">Ник:</span> @{{ item.telegram_nick }}</p>
                                 <p><span class="info-label">Telegram ID:</span> {{ item.telegram_id }}</p>
+
+                                {% if status == 'closed' %}
+                                    <p><span class="info-label">Создано:</span> {{ item.created_at }}</p>
+                                    <p><span class="info-label">Закрыто:</span> {{ item.closed_at or "—" }}</p>
+                                {% endif %}
                             </div>
                             <a href="/chat/operator/{{ item.request.id }}" class="btn btn--action">Открыть чат</a>
                         </div>

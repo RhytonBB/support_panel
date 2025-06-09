@@ -7,8 +7,6 @@ from flask import jsonify
 
 views_bp = Blueprint("views", __name__)
 
-# ... (весь импорт оставляем как есть)
-
 @views_bp.route("/")
 @login_required
 def index():
@@ -35,7 +33,9 @@ def list_requests(status):
                 "request": req,
                 "full_name": worker.full_name,
                 "telegram_nick": worker.telegram_nick,
-                "telegram_id": worker.telegram_id
+                "telegram_id": worker.telegram_id,
+                "created_at": req.created_at.strftime("%d.%m.%Y %H:%M") if req.created_at else None,
+                "closed_at": req.closed_at.strftime("%d.%m.%Y %H:%M") if req.closed_at else None
             })
 
     return render_template("list_requests.html", status=status, requests=enriched)
