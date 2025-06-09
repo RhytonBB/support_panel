@@ -3,87 +3,37 @@
 <head>
     <meta charset="UTF-8" />
     <title>Чат поддержки</title>
-    <style>
-        .message { padding: 10px; margin: 10px 0; border-radius: 5px; max-width: 70%; }
-        .user { background-color: #e0f7fa; margin-left: auto; }
-        .admin { background-color: #ffe0b2; margin-right: auto; }
-        .meta { font-size: 0.8em; color: gray; }
-        .media img, .media video {
-            max-width: 200px;
-            max-height: 150px;
-            margin-top: 5px;
-            display: block;
-        }
-    </style>
+    <link rel="stylesheet" href="static/css/user_chat.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h2>Обращение в поддержку</h2>
-    <p><strong>Пользователь:</strong> {{ full_name }}</p>
+    <div class="chat-container">
+        <h2>Обращение в поддержку</h2>
+        <p class="user-info"><strong>Пользователь:</strong> {{ full_name }}</p>
+        <div class="container">
+            <div class="chat-messages" id="chat"></div>
 
-    <div class="chat" id="chat"></div>
-
-    {% if status == 'closed' %}
-        <p><em>Обращение закрыто. Вы не можете отправлять сообщения.</em></p>
-    {% else %}
-        <form method="POST" enctype="multipart/form-data"
-              action="{{ url_for('views.user_chat', token=token, telegram_id=telegram_id) }}">
-            <textarea name="text" rows="3" placeholder="Введите сообщение..." style="width:100%"></textarea><br />
-            <input type="file" name="media" multiple accept="image/*,video/*" /><br />
-            <button type="submit">Отправить</button>
-        </form>
-    {% endif %}
-
-<script>
-    const requestId = parseInt("{{ request_id }}");
-    const chatEl = document.getElementById("chat");
-
-    function renderMessages(messages) {
-        chatEl.innerHTML = "";
-        messages.forEach(msg => {
-            const div = document.createElement("div");
-            div.className = "message " + (msg.sender === 'user' ? 'user' : 'admin');
-
-            if (msg.text) {
-                const text = document.createElement("div");
-                text.innerText = msg.text;
-                div.appendChild(text);
-            }
-
-            if (msg.media && msg.media.length > 0) {
-                const mediaContainer = document.createElement("div");
-                mediaContainer.className = "media";
-                msg.media.forEach(m => {
-                    if (m.endsWith('.mp4') || m.endsWith('.webm')) {
-                        const video = document.createElement("video");
-                        video.src = m;
-                        video.controls = true;
-                        mediaContainer.appendChild(video);
-                    } else {
-                        const img = document.createElement("img");
-                        img.src = m;
-                        mediaContainer.appendChild(img);
-                    }
-                });
-                div.appendChild(mediaContainer);
-            }
-
-            const meta = document.createElement("div");
-            meta.className = "meta";
-            meta.innerText = msg.created_at;
-            div.appendChild(meta);
-
-            chatEl.appendChild(div);
-        });
-    }
-
-    async function fetchMessages() {
-        const res = await fetch(`/api/messages/${requestId}`);
-        const messages = await res.json();
-        renderMessages(messages);
-    }
-
-    fetchMessages();
-    setInterval(fetchMessages, 5000);
-</script>
+            {% if status == 'closed' %}
+                <p class="status-message"><em>Обращение закрыто. Вы не можете отправлять сообщения.</em></p>
+            {% else %}
+                <div class="form-container">
+                    <form class="message-form" method="POST" enctype="multipart/form-data"
+                        action="{{ url_for('views.user_chat', token=token, telegram_id=telegram_id) }}">
+                        <textarea name="text" rows="3" placeholder="Введите сообщение..."></textarea>
+                        <div class="form-controls">
+                            <input type="file" name="media" multiple accept="image/*,video/*" />
+                            <button type="submit">Отправить</button>
+                        </div>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <script src="static/js/user_chat.js"></script>
 </body>
 </html>

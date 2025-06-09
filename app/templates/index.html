@@ -1,13 +1,33 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
-<head><title>Главное меню</title></head>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Панель поддержки</title>
+  <link rel="stylesheet" href="/static/css/index.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+</head>
 <body>
-  <h2>Панель поддержки</h2>
-  <ul>
-    <li><a href="/requests/new">Новые обращения</a></li>
-    <li><a href="/requests/in_progress">Текущие</a></li>
-    <li><a href="/requests/closed">Архив</a></li>
-  </ul>
-  <a href="/logout">Выход</a>
+  <div class="dashboard-container">
+    <header class="dashboard-header">
+      <h2>Панель поддержки</h2>
+    </header>
+
+    <main class="dashboard-content">
+      <ul class="menu-list">
+        <li><a href="/requests/new" class="menu-link">Новые обращения</a></li>
+        <li><a href="/requests/in_progress" class="menu-link">Текущие</a></li>
+        <li><a href="/requests/closed" class="menu-link">Архив</a></li>
+      </ul>
+    </main>
+
+    <footer class="dashboard-footer">
+      <a href="/logout" class="logout-btn">Выход</a>
+    </footer>
+  </div>
+
+  <script src="static/js/index.js"></script>
 </body>
 </html>

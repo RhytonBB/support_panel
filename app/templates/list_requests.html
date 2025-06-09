@@ -2,82 +2,50 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ status|capitalize }} обращения</title>
-    <style>
-        .flash {
-            background-color: #ffe0e0;
-            border: 1px solid red;
-            padding: 10px;
-            margin-bottom: 15px;
-            color: darkred;
-        }
-    </style>
-</head>
+    <link rel="stylesheet" href="/static/css/list_requests.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+    </head>
 <body>
-    <h2>{{ status|capitalize }} обращения</h2>
+    <div class="container">
+        <header class="header">
+            <h1 class="header__title">{{ status|capitalize }} обращения</h1>
+            <a href="/" class="btn btn--back">Назад</a>
+        </header>
 
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <div class="flash">
-          {% for message in messages %}
-            <p>{{ message }}</p>
-          {% endfor %}
-        </div>
-      {% endif %}
-    {% endwith %}
-
-    {% if status == 'new' %}
-        <div id="new-requests-list"></div>
-        <script>
-            async function fetchNewRequests() {
-                const res = await fetch("/api/requests/new");
-                const requests = await res.json();
-
-                const list = document.getElementById("new-requests-list");
-                list.innerHTML = "";
-
-                if (requests.length === 0) {
-                    list.innerHTML = "<p>Нет новых обращений.</p>";
-                    return;
-                }
-
-                requests.forEach(r => {
-                    const div = document.createElement("div");
-                    div.style = "border: 1px solid gray; padding: 10px; margin-bottom: 10px;";
-                    div.innerHTML = `
-                        <p><strong>ФИО:</strong> ${r.full_name}</p>
-                        <p><strong>Создано:</strong> ${new Date(r.created_at).toLocaleString()}</p>
-                        <form method="POST" action="/requests/respond/${r.id}" onsubmit="disableButton(this)">
-                            <button type="submit">Откликнуться</button>
-                        </form>
-                    `;
-                    list.appendChild(div);
-                });
-            }
-
-            function disableButton(form) {
-                const btn = form.querySelector("button");
-                if (btn) {
-                    btn.disabled = true;
-                    btn.innerText = "Ожидайте...";
-                }
-            }
-
-            fetchNewRequests();
-            setInterval(fetchNewRequests, 3000);
-        </script>
-    {% else %}
-    <a href="/">Назад</a>
-        {% for item in requests %}
-            <div style="border: 1px solid gray; padding: 10px; margin-bottom: 10px;">
-                <p><strong>ФИО:</strong> {{ item.full_name }}</p>
-                <p><strong>Ник:</strong> @{{ item.telegram_nick }}</p>
-                <p><strong>Telegram ID:</strong> {{ item.telegram_id }}</p>
-                <a href="/chat/operator/{{ item.request.id }}">Открыть чат</a>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div class="alert">
+              {% for message in messages %}
+                <p>{{ message }}</p>
+              {% endfor %}
             </div>
-        {% endfor %}
-    {% endif %}
+          {% endif %}
+        {% endwith %}
 
-    <a href="/">Назад</a>
+        <main class="main">
+            {% if status == 'new' %}
+                <div id="new-requests-list" class="requests-list"></div>
+            {% else %}
+                <div class="requests-list">
+                    {% for item in requests %}
+                        <div class="request-card">
+                            <div class="request-info">
+                                <p><span class="info-label">ФИО:</span> {{ item.full_name }}</p>
+                                <p><span class="info-label">Ник:</span> @{{ item.telegram_nick }}</p>
+                                <p><span class="info-label">Telegram ID:</span> {{ item.telegram_id }}</p>
+                            </div>
+                            <a href="/chat/operator/{{ item.request.id }}" class="btn btn--action">Открыть чат</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </main>
+    </div>
+
+    <script src="static/js/list_requests.js"></script>
 </body>
 </html>
