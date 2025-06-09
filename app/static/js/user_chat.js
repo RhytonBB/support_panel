@@ -1,4 +1,4 @@
-const requestId = parseInt("{{ request_id }}");
+const requestId = "{{ request_id }}";
 const chatEl = document.getElementById("chat");
 
 function renderMessages(messages) {
