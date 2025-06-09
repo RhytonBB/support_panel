@@ -1,0 +1,95 @@
+/* Основные стили */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Arial', sans-serif;
+}
+
+body {
+  font-family:'Mulish', arial;
+  background-color: #f5f5f5;
+  color: #333;
+  line-height: 1.6;
+}
+
+.dashboard-container {
+  max-width: 800px;
+  margin: 50px auto;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Шапка */
+.dashboard-header {
+  background: #006FEE;
+  color: white;
+  padding: 25px;
+  text-align: center;
+}
+
+.dashboard-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+/* Основное содержание */
+.dashboard-content {
+  padding: 30px;
+}
+
+.menu-list {
+  list-style: none;
+}
+
+.menu-list li {
+  margin-bottom: 12px;
+}
+
+.menu-link {
+  display: block;
+  padding: 16px 20px;
+  background: white;
+  color: #333;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+}
+
+.menu-link:hover {
+  background: #006FEE;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Футер */
+.dashboard-footer {
+  text-align: center;
+  padding: 25px;
+  background: white;
+  border-top: 1px solid #e0e0e0;
+}
+
+.logout-btn {
+  display: inline-block;
+  padding: 12px 30px;
+  background: #FF6D00;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.logout-btn:hover {
+  background: #e05d0a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
