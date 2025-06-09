@@ -34,6 +34,9 @@
             {% endif %}
         </div>
     </div>
+    <script>
+    const requestId = parseInt("{{ request_id }}");
+    </script>
     <script src="{{ url_for('static', filename='js/user_chat.js') }}"></script>
 </body>
 </html>
