@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <title>Чат поддержки</title>
-    <link rel="stylesheet" href="static/css/user_chat.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user_chat.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
@@ -34,6 +34,6 @@
             {% endif %}
         </div>
     </div>
-    <script src="static/js/user_chat.js"></script>
+    <script src="{{ url_for('static', filename='js/user_chat.js') }}"></script>
 </body>
 </html>
