@@ -12,7 +12,17 @@
 <body>
     <div class="container">
         <header class="header">
-            <h1 class="header__title">{{ status|capitalize }} обращения</h1>
+            <h1 class="header__title">
+              {% if status == 'new' %}
+                Новые обращения
+              {% elif status == 'in_progress' %}
+                Текущие обращения
+              {% elif status == 'closed' %}
+                Архив обращений
+              {% else %}
+                Обращения
+              {% endif %}
+            </h1>
             <a href="/" class="btn btn--back">Назад</a>
         </header>
 
